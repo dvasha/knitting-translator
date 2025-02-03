@@ -30,28 +30,36 @@ def translateGauge(oldGauge : gauge, newGauge : gauge):
     ratioS = float(1) / oldGauge.stitches * newGauge.stitches
     ratioR = float(1) / oldGauge.rows * newGauge.rows
     return ratioS, ratioR
-def translate(knittingpattern, newgauge):
+def translate(knittingpattern, newgauge: gauge):
     ratioS, ratioR = translateGauge(knittingpattern.knitgauge, newgauge)
-    
+    remS, remR = 0, 0
     with open("newpattern.txt", "w") as f:
         for line in knittingpattern.txtfile:
             # parsing here
             line = line.strip()
             match line.split():
-                case ["gauge:", numS, numR]:
-                    f.write(f"gauge: {float((numS.split(','))[0])*ratioS},{float(numR)*ratioR}\n")
+                case ["gauge:", _, _]:
+                    f.write(f"gauge: {newgauge.stitches},{newgauge.rows}\n")
                 case ["co", values]:
-                    f.write(f"co {float(values)*ratioS}\n")
+                    newS, remS = roundUp(float(values)*ratioS, remS)
+                    f.write(f"co {newS}\n")
                 case ["stk", values]:
-                    f.write(f"stk {float(values)*ratioR}\n")
+                    newR, remR = roundUp(float(values)*ratioR, remR)
+                    f.write(f"stk {newR}\n")
                 case ["for", height, "inc", width]:
-                    f.write(f"for {float(height)*ratioR} inc {float(width)*ratioS}\n")
+                    newR, remR = roundUp(float(height)*ratioR, remR)
+                    newS, remS = roundUp(float(width)*ratioS, remS)
+                    f.write(f"for {newR} inc {newS}\n")
                 case ["for", height, "dec", width]:
-                    f.write(f"for {float(height)*ratioR} dec {float(width)*ratioS}\n")
+                    newR, remR = roundUp(float(height)*ratioR, remR)
+                    newS, remS = roundUp(float(width)*ratioS, remS)
+                    f.write(f"for {newR} dec {newS}\n")
                 case ["inc", values]:
-                    f.write(f"inc {float(values)*ratioS}\n")
+                    newS, remS = roundUp(float(width)*ratioS, remS)
+                    f.write(f"inc {newS}\n")
                 case ["dec", values]:
-                    f.write(f"dec {float(values)*ratioS}\n")
+                    newS, remS = roundUp(float(width)*ratioS, remS)
+                    f.write(f"dec {newS}\n")
       
 def getknittingpattern(patternname):
     with open(patternname, "r") as f:
