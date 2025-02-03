@@ -1,0 +1,27 @@
+gauge: 16, 24
+front:
+co 10
+stk 12
+for 20 inc 8
+inc 4
+stk 20
+for 16 inc 12
+inc 2
+stk 60
+rib
+
+back:
+co 10
+for 16 inc 17
+join
+stk 32
+for 18 inc 12
+inc 2
+stk 60
+rib
+
+sleeves:
+co 96
+short row shaping
+stk 80
+rib
