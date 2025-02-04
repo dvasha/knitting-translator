@@ -60,6 +60,8 @@ def translate(knittingpattern, newgauge: gauge):
                 case ["dec", values]:
                     newS, remS = roundUp(float(width)*ratioS, remS)
                     f.write(f"dec {newS}\n")
+                case [rest]:
+                    f.write(f"{rest}\n")
       
 def getknittingpattern(patternname):
     with open(patternname, "r") as f:
@@ -75,6 +77,22 @@ def getgauge():
     x, y = string.split(',')
     return gauge(float(x), float(y)) 
 
+
+
+#optimal solution such that 3x+2y+z=Height and x+y+z=Width, with x<=y<=z and difference between x,y,z is minimal 
+def calculateFor(H, W):
+    if H < W:
+        raise Exception("unimplemented!") #need to create more advances function to allow such cases
+    for z in range (0,W+1):
+        for y in range (0, z+1):
+            for x in range (0, z + 1):
+                if (3*x + 2*y + z == H) and (x + y + z == W):
+                    return(x,y,z)
+    raise Exception("critical error")
+
+    
+
+
 def main():
     # currentgauge = getgauge()
     currentgauge = gauge(22,31)
@@ -84,7 +102,8 @@ def main():
     translate(knittingpattern, currentgauge)
     
     
+print(calculateFor(35, 15))
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
