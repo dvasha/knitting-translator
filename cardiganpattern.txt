@@ -12,7 +12,8 @@ rib
 
 back:
 co 10
-for 16 inc 17
+for 16 inc 14
+inc 3 
 join
 stk 32
 for 18 inc 12

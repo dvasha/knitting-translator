@@ -49,18 +49,37 @@ def translate(knittingpattern, newgauge: gauge):
                 case ["for", height, "inc", width]:
                     newR, remR = roundUp(float(height)*ratioR, remR)
                     newS, remS = roundUp(float(width)*ratioS, remS)
+                    f.write(f"for {newR} inc {newS}:\n")
                     x,y, z = calculateFor(newR, newS)
-                    f.write(f"for {newR} inc {newS}\n")
-                    f.write(f"\t inc 1 every 3 rows {x} times \n\t inc 1 row every 2 rows {y} times \n\t inc 1 every row {z} times\n")
+                    if(x<0):
+                        f.write(f"!!!!!! WIDTH > HEIGHT -- implement in python or handle manually !!!!!!\n")
+                    else:
+                        if(x>0):
+                            f.write(f"\t inc 1 every 3 rows {x} times \n")
+                        if(y>0):
+                            f.write(f"\t inc 1 every 2 rows {y} times \n")
+                        if(z>0):
+                            f.write(f"\t inc 1 every row {z} times \n")
                 case ["for", height, "dec", width]:
                     newR, remR = roundUp(float(height)*ratioR, remR)
                     newS, remS = roundUp(float(width)*ratioS, remS)
-                    f.write(f"for {newR} dec {newS}\n")
+                    f.write(f"for {newR} dec {newS}:\n")
+                    x,y, z = calculateFor(newR, newS)
+                    if(x<0):
+                        f.write(f"!!!!!! WIDTH > HEIGHT -- implement in python or handle manually !!!!!!\n")
+                    else:
+                        if(x>0):
+                            f.write(f"\t dec 1 every 3 rows {x} times \n")
+                        if(y>0):
+                            f.write(f"\t dec 1 every 2 rows {y} times \n")
+                        if(z>0):
+                            f.write(f"\t dec 1 every row {z} times \n")
                 case ["inc", values]:
-                    newS, remS = roundUp(float(width)*ratioS, remS)
+                    
+                    newS, remS = roundUp(float(values)*ratioS, remS)
                     f.write(f"inc {newS}\n")
                 case ["dec", values]:
-                    newS, remS = roundUp(float(width)*ratioS, remS)
+                    newS, remS = roundUp(float(values)*ratioS, remS)
                     f.write(f"dec {newS}\n")
                 case [rest]:
                     f.write(f"{rest}\n")
@@ -79,26 +98,41 @@ def getgauge():
     x, y = string.split(',')
     return gauge(float(x), float(y)) 
 
+def maxDiff(a,b,c):
+    lst = [abs(a-b), abs(b-c)]
+    return max(lst)
 
-
-#optimal solution such that 3x+2y+z=Height and x+y+z=Width, with x<=y<=z and difference between x,y,z is minimal 
+# W <= H <= 3 W 
+#optimal solution such that 3x+2y+z=Height and x+y+z=Width, with x<=y<=z and difference between x-y, y-z are minimal/ 
 def calculateFor(H, W):
     if H < W:
+        print(H,W)
         raise Exception("unimplemented!") #need to create more advances function to allow such cases
-    
-    #maximal x
-    # constraints:
-    #1. x + y + z = W
-    #2. 3x + 2y + z = H
-    #3. 0<=z<=y<=x
-    #4. maximize x 
-    print(H, W)
-    for x in range (W, -1, -1):
-        for y in range (x, -1, -1):
-            for z in range (y, -1, -1):
-                if (3*x + 2*y + z == H) and (x + y + z == W):
-                    return(x,y,z)
-    raise Exception("critical error")
+    # print(H, W);
+    minDiff = W
+     # the maximal one would be when z=w and everyone else is 0
+    minX, minY, minZ = -1,-1,-1
+    #minimal diff algo
+    for x in range(0,W+1):
+        for y in range (0, W+1):
+            z = W - x - y 
+            if(z<0):
+                continue
+            if (3*x + 2*y + z == H):
+                currDiff = maxDiff(x,y,z)
+                # print(f"{x},{y},{z}, {currDiff}  \n{minX}, {minY}, {minZ}, {minDiff} \n")
+                if (currDiff <= minDiff):
+                    minX = x 
+                    minY = y 
+                    minZ = z 
+                    minDiff = currDiff
+
+    return minX, minY, minZ
+    #if values are negative, there is no solution for this, therefore an extra value (w) should be added such that:
+    # 4w + 3x + 2y + z = H
+    # w + x + y + z = W
+    # currently no need, since such shallow tapers do not exist in my patterns.
+    # I will note that cases where W > H do exist in my knitting, but rarely and I would rather handle them manually.
         
 
 
@@ -114,8 +148,14 @@ def main():
     translate(knittingpattern, currentgauge)
     
     
-# print(calculateFor(35, 15))
+# for w in range (1, 200):
+#     for h in range (w, 3*w+1):
+#         res = calculateFor(h, w)
+#         if (res[0] == -1):
+#             print("ERROR for: {h}, {w}.\n")
 
 
 if __name__ == "__main__":
     main()
+
+    #21 or 15 + 6 14 + 3 + 4 15+2 14 + 1 + 2
