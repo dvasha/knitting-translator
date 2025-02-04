@@ -49,7 +49,9 @@ def translate(knittingpattern, newgauge: gauge):
                 case ["for", height, "inc", width]:
                     newR, remR = roundUp(float(height)*ratioR, remR)
                     newS, remS = roundUp(float(width)*ratioS, remS)
+                    x,y, z = calculateFor(newR, newS)
                     f.write(f"for {newR} inc {newS}\n")
+                    f.write(f"\t inc 1 every 3 rows {x} times \n\t inc 1 row every 2 rows {y} times \n\t inc 1 every row {z} times\n")
                 case ["for", height, "dec", width]:
                     newR, remR = roundUp(float(height)*ratioR, remR)
                     newS, remS = roundUp(float(width)*ratioS, remS)
@@ -90,6 +92,7 @@ def calculateFor(H, W):
     #2. 3x + 2y + z = H
     #3. 0<=z<=y<=x
     #4. maximize x 
+    print(H, W)
     for x in range (W, -1, -1):
         for y in range (x, -1, -1):
             for z in range (y, -1, -1):
@@ -111,8 +114,8 @@ def main():
     translate(knittingpattern, currentgauge)
     
     
-print(calculateFor(35, 15))
+# print(calculateFor(35, 15))
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
