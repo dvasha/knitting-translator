@@ -1,4 +1,6 @@
 import math
+import sys
+
 class gauge:
     stitches = 0
     rows = 0
@@ -41,10 +43,11 @@ def maxDiff(a,b,c):
     lst = [abs(a-b), abs(b-c)]
     return max(lst)
 
-def translate(knittingpattern, newgauge: gauge):
+def translate(knittingpattern, newgauge: gauge, knittingpatternpath):
     ratioS, ratioR = translateGauge(knittingpattern.knitgauge, newgauge)
     remS, remR = 0, 0
-    with open("newpattern.txt", "w") as f:
+    newFileName = knittingpatternpath.removesuffix(".txt") + "_new_{newgauge.stitches}_{newgauge.rows}.txt"
+    with open(newFileName, "w") as f:
         for line in knittingpattern.txtfile:
             # parsing here
             line = line.strip()
@@ -135,14 +138,15 @@ def calculateFor(H, W):
     # currently no need, since such shallow tapers do not exist in my patterns.
     # I will note that cases where W > H do exist in my knitting, but rarely and I would rather handle them manually.
         
-def main():
-    # currentgauge = getgauge()
-    currentgauge = gauge(22,31)
-    knittingpattern = getknittingpattern("./cardiganpattern.txt")
-    knittingpattern.print()
+def main(knitpatternpath):
+    knittingpattern = getknittingpattern(knitpatternpath)
+    currentgauge = getgauge()
     print(translateGauge(knittingpattern.knitgauge, currentgauge))
-    translate(knittingpattern, currentgauge)
+    translate(knittingpattern, currentgauge, knitpatternpath)
 
 if __name__ == "__main__":
-    main()
+    if(len(sys.argv) != 2):
+        print("Usage: knit-translate.py <path to knitting pattern>")
+    else:
+        main(sys.argv[1])
 
