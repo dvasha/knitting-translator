@@ -141,7 +141,6 @@ def calculateFor(H, W):
 def main(knitpatternpath):
     knittingpattern = getknittingpattern(knitpatternpath)
     currentgauge = getgauge()
-    print(translateGauge(knittingpattern.knitgauge, currentgauge))
     translate(knittingpattern, currentgauge, knitpatternpath)
 
 if __name__ == "__main__":
