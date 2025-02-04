@@ -83,12 +83,21 @@ def getgauge():
 def calculateFor(H, W):
     if H < W:
         raise Exception("unimplemented!") #need to create more advances function to allow such cases
-    for z in range (0,W+1):
-        for y in range (0, z+1):
-            for x in range (0, z + 1):
+    
+    #maximal x
+    # constraints:
+    #1. x + y + z = W
+    #2. 3x + 2y + z = H
+    #3. 0<=z<=y<=x
+    #4. maximize x 
+    for x in range (W, -1, -1):
+        for y in range (x, -1, -1):
+            for z in range (y, -1, -1):
                 if (3*x + 2*y + z == H) and (x + y + z == W):
                     return(x,y,z)
     raise Exception("critical error")
+        
+
 
     
 
