@@ -46,7 +46,7 @@ def maxDiff(a,b,c):
 def translate(knittingpattern, newgauge: gauge, knittingpatternpath):
     ratioS, ratioR = translateGauge(knittingpattern.knitgauge, newgauge)
     remS, remR = 0, 0
-    newFileName = knittingpatternpath.removesuffix(".txt") + "_new_{newgauge.stitches}_{newgauge.rows}.txt"
+    newFileName = knittingpatternpath.removesuffix(".txt") + f"_new_{newgauge.stitches}_{newgauge.rows}.txt"
     with open(newFileName, "w") as f:
         for line in knittingpattern.txtfile:
             # parsing here
